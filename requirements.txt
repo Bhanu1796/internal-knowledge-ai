@@ -1,0 +1,35 @@
+# Web framework
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+
+# Frontend
+streamlit==1.45.1
+
+# LangChain
+langchain==0.3.25
+langchain-openai==0.3.19
+langchain-community==0.3.24
+langchain-chroma==0.2.4
+
+# Vector store
+chromadb>=1.0.9
+
+# Document loaders
+pypdf==5.4.0
+python-docx==1.1.2
+unstructured==0.17.2
+
+# Configuration & validation
+pydantic==2.11.4
+pydantic-settings==2.9.1
+python-dotenv==1.1.0
+
+# HTTP client (for Streamlit → FastAPI calls + tests)
+httpx==0.28.1
+
+# Testing
+pytest==8.3.5
+pytest-asyncio==0.26.0
+
+# Utilities
+tenacity==9.1.2
