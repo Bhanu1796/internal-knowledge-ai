@@ -49,21 +49,16 @@ The frontend is a **Streamlit chat application** (`frontend/app.py`). This docum
 ### Knowledge Base Documents Panel
 - Section header: **"Knowledge Base"**
 - Fetch document list from `GET /documents` on page load
-- Render as a `st.sidebar.expander("📚 Indexed Documents", expanded=False)`
-- Each document displayed as:
-  ```
-  • Annual Leave Policy   (6 chunks)
-  • IT Software Request   (5 chunks)
-  ```
-- Show total at bottom: `Total: 47 chunks across 8 documents`
-- On error fetching documents: show `st.sidebar.warning("Could not load document list")`
+- Render as `st.expander("Knowledge Base", expanded=True)`
+- Each document displayed as a styled `doc-item` div with the document title only (no chunk count)
+- On error fetching documents: show `st.caption("Could not load documents.")`
 
 ### Settings Panel
-- Render as `st.sidebar.expander("⚙️ Settings", expanded=False)`
-- **Top-K slider**: `st.sidebar.slider("Results to retrieve", min=1, max=20, value=5, step=1)`
+- Render as `st.expander("Settings", expanded=False)`
+- **Top-K slider**: `st.slider("Top-K results", min_value=1, max_value=20, value=5, step=1)`
   - Stored in `st.session_state["top_k"]`
-- **Clear Chat button**: `st.sidebar.button("🗑️ Clear conversation")`
-  - On click: clear `st.session_state["messages"]` and rerun
+- **Clear Chat button**: `st.button("Clear conversation", use_container_width=True)`
+  - On click: clear `st.session_state["messages"]` and `st.rerun()`
 
 ### API Status Badge
 - Pinned to bottom of sidebar
@@ -113,20 +108,28 @@ with st.chat_message("assistant", avatar="🔍"):
         st.caption(f"Intent: {message['intent']}")
 ```
 
-#### Welcome Message
-Displayed only when `st.session_state["messages"]` is empty:
+#### Welcome State (empty conversation)
+
+Displayed only when `st.session_state["messages"]` is empty. Shows a welcome card followed by **6 clickable example query buttons** arranged in a 3-column grid.
 
 ```python
-with st.chat_message("assistant", avatar="🔍"):
-    st.markdown(
-        "Hello! I'm your Knowledge Base Navigator. "
-        "Ask me anything about company policies, processes, or guidelines."
-    )
-    st.markdown("**Try asking:**")
-    st.markdown("- *What is the annual leave policy?*")
-    st.markdown("- *How do I request new software?*")
-    st.markdown("- *What are the remote work requirements?*")
+EXAMPLE_QUERIES = [
+    "What is the annual leave policy?",
+    "How do I request new software?",
+    "What are the remote work requirements?",
+    "How do I submit an expense claim?",
+    "What are the security guidelines?",
+    "How does the performance review work?",
+]
+
+cols = st.columns(3)
+for i, q in enumerate(EXAMPLE_QUERIES):
+    if cols[i % 3].button(q, key=f"pill_{i}", use_container_width=True):
+        st.session_state.prefill_query = q
+        st.rerun()
 ```
+
+Clicking a button sets `st.session_state.prefill_query` and triggers a rerun. The chat input handler picks up `prefill_query` on the next render and fires the query automatically.
 
 ---
 
@@ -215,14 +218,40 @@ While the API call is in progress:
 
 ---
 
+## Pipeline Trace Component
+
+Displayed below each assistant response as a collapsed `st.expander("How I found this")`.
+Shows the internal reasoning of the 4-stage pipeline without cluttering the main answer.
+
+### Layout
+```
+▶ How I found this
+  ┌─────────────────────────────────────────────────────┐
+  │ Reformulated query                                  │
+  │   "annual leave entitlement days employee policy"   │
+  │                                                     │
+  │ Key entities                                        │
+  │  [annual leave]  [entitlement]  [policy]            │
+  │                                                     │
+  │ ⚡ 3 241 ms total                                   │
+  └─────────────────────────────────────────────────────┘
+```
+
+### Data source
+All three values come from the API response fields added to `QueryResponse`:
+- `reformulated_query` — Stage 1 output
+- `key_entities` — Stage 1 output
+- `processing_time_ms` — measured by `run_pipeline()`
+
+---
+
 ## Session State Keys
 
 | Key | Type | Description |
 |---|---|---|
 | `messages` | `list[dict]` | Full conversation history |
 | `top_k` | `int` | Current top-K retrieval setting (default: `5`) |
-| `loading` | `bool` | True while an API call is in progress |
-| `documents` | `list[dict]` | Cached document list from `GET /documents` |
+| `prefill_query` | `str` | Set by example pill buttons; consumed once by the chat input handler |
 
 Initialise all keys at the top of `app.py`:
 

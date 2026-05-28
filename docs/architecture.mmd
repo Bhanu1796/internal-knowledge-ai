@@ -1,0 +1,56 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#4F46E5", "primaryTextColor": "#ffffff", "primaryBorderColor": "#3730A3", "lineColor": "#6366F1", "secondaryColor": "#EEF2FF", "tertiaryColor": "#F0F9FF"}}}%%
+flowchart TD
+    User(["👤 Employee\n(Browser)"])
+
+    subgraph FE["Frontend — Streamlit :8501"]
+        UI["Chat UI\n• Question input\n• Answer display\n• Intent chip\n• Source cards"]
+    end
+
+    subgraph BE["Backend — FastAPI :8000"]
+        R1["POST /query"]
+        R2["GET /health"]
+        R3["GET /documents"]
+        R4["GET /documents/view/{filename}"]
+
+        subgraph PIPE["Sequential RAG Pipeline (LangChain LCEL)"]
+            direction TB
+            A1["① Query Understanding\n• Intent classification\n• Query reformulation\n• Key entity extraction\n  temp=0"]
+            A2["② Search Agent\n• Semantic similarity search\n• Top-K chunk retrieval\n• Score conversion"]
+            A3["③ Answer Generator\n• Context-grounded synthesis\n• has_answer detection\n  temp=0.3"]
+            A4["④ Source Linker\n• Deduplication by source\n• Score-ranked SourceLinks"]
+            A1 --> A2 --> A3 --> A4
+        end
+    end
+
+    subgraph DATA["Data Layer"]
+        VDB[("ChromaDB\n(persistent on-disk)\ncollection: knowledge_base\n35 chunks / 8 docs")]
+        FS[("Document Store\ndata/sample_docs/\n8 × Markdown files")]
+    end
+
+    subgraph LLM["LLM Provider — LiteLLM Proxy"]
+        GEN["gemini-2.5-flash\n(answer generation)"]
+        EMB["text-embedding-3-large\n(embeddings)"]
+    end
+
+    subgraph INGEST["Ingestion (offline — scripts/ingest.py)"]
+        DL["Document Loader\nRecursiveCharacterTextSplitter\nchunk_size=500 / overlap=50"]
+        EMB2["Embedder\nOpenAIEmbeddings → ChromaDB"]
+        DL --> EMB2
+    end
+
+    User -->|"HTTP"| UI
+    UI -->|"POST /query\n{question, top_k}"| R1
+    UI -->|"GET /health\nGET /documents"| R2
+    UI -->|"GET /documents"| R3
+
+    R1 --> PIPE
+    A2 -->|"similarity_search"| VDB
+    A3 -->|"LLM call"| GEN
+    A1 -->|"LLM call"| GEN
+
+    R4 -->|"serve file"| FS
+    VDB -.->|"metadata: doc_url"| R4
+
+    EMB2 -->|"embed + persist"| VDB
+    EMB2 -->|"embed query"| EMB
+    FS -->|"load .md files"| DL

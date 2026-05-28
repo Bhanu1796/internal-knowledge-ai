@@ -6,6 +6,23 @@
 
 ---
 
+## Current Phase Status
+
+| Phase | Name | Status |
+|-------|------|--------|
+| 1 | Scaffolding | ✅ Complete |
+| 2 | Document Ingestion | ✅ Complete |
+| 3a | Pipeline Agents | ✅ Complete |
+| 3b | Pipeline Wiring | ✅ Complete |
+| 4 | FastAPI Backend | ✅ Complete |
+| 5 | Streamlit Frontend | ✅ Complete |
+| 6 | Tests | ✅ Complete |
+| 7 | Polish & Demo Prep | ✅ Complete |
+
+See [CHECKPOINTS.md](CHECKPOINTS.md) for gate criteria and [PLAN.md](PLAN.md) for the full timeline.
+
+---
+
 ## Architecture
 
 ```
@@ -210,8 +227,13 @@ Eight company policy documents are included in `data/sample_docs/`:
 
 ## Further Reading
 
-- [Architecture](docs/architecture.md)
-- [Pipeline stages](docs/pipeline.md)
-- [Ingestion](docs/ingestion.md)
-- [API reference](docs/api.md)
-- [Setup guide](docs/setup.md)
+- [SPEC.md](SPEC.md) — agent contracts, I/O schemas, API shapes
+- [PLAN.md](PLAN.md) — 2-week milestones
+- [CHECKPOINTS.md](CHECKPOINTS.md) — phase gate criteria
+- [DEPENDENCIES.md](DEPENDENCIES.md) — build-order dependency graph
+- [PROMPT_SEQUENCES.md](PROMPT_SEQUENCES.md) — Copilot Agent Mode prompt patterns
+- [FUTURE_VISION.md](FUTURE_VISION.md) — product roadmap beyond the MVP
+- [MVP_PREVIEW.md](MVP_PREVIEW.md) — concrete preview of the 2-week deliverable
+- [DEMO_GUIDE.md](DEMO_GUIDE.md) — live demo script
+- [docs/architecture.mmd](docs/architecture.mmd) — canonical Mermaid diagram
+- [docs/architecture.md](docs/architecture.md) — architecture narrative

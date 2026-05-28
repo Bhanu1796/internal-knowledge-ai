@@ -53,6 +53,9 @@ class QueryResponse(BaseModel):
     has_answer: bool
     sources: List[SourceLink]
     processing_time_ms: int
+    reformulated_query: str = ""
+    key_entities: List[str] = Field(default_factory=list)
+    chunks_retrieved: int = 0
 
 
 class DocumentInfo(BaseModel):

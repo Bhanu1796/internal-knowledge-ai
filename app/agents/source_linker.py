@@ -34,9 +34,13 @@ def run(input_data: dict) -> dict:
 
     logger.info("Source linker produced %d unique sources.", len(sources))
 
+    ctx = generated_answer.search_result.query_context
     return {
         "answer_text": generated_answer.answer_text,
         "has_answer": generated_answer.has_answer,
-        "intent": generated_answer.search_result.query_context.intent,
+        "intent": ctx.intent,
         "sources": sources,
+        "reformulated_query": ctx.reformulated_query,
+        "key_entities": ctx.key_entities,
+        "chunks_retrieved": len(chunks),
     }

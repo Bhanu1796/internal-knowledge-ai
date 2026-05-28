@@ -151,51 +151,44 @@ Collect the **unique source documents** referenced by the retrieved chunks and f
 2. For each unique source, build a `SourceLink` with the document title, URL, and page reference
 3. Sort by descending similarity score so the most relevant source appears first
 
-### Output — `List[SourceLink]`
+### Output — `dict` (passed to `run_pipeline`)
+
+The Source Linker flattens the pipeline state into a plain dict consumed by `run_pipeline()`:
+
 ```python
-class SourceLink(BaseModel):
-    title: str        # Human-readable document title
-    url: str          # Simulated Confluence/SharePoint URL
-    source_file: str  # Original filename
-    page: int         # Page/section number
-    score: float      # Best similarity score from this document
+{
+    "answer_text": str,
+    "has_answer": bool,
+    "intent": str,
+    "sources": List[SourceLink],
+    "reformulated_query": str,   # carried forward from Stage 1
+    "key_entities": List[str],   # carried forward from Stage 1
+    "chunks_retrieved": int,     # total chunks returned by Stage 2
+}
 ```
 
-### Example Output
-```json
-[
-  {
-    "title": "IT Software Request Policy",
-    "url": "https://confluence.internal/pages/it-software-policy",
-    "source_file": "it-software-policy.md",
-    "page": 2,
-    "score": 0.87
-  },
-  {
-    "title": "Employee Onboarding Guide",
-    "url": "https://confluence.internal/pages/onboarding-guide",
-    "source_file": "onboarding-guide.md",
-    "page": 5,
-    "score": 0.74
-  }
-]
-```
+Deduplication rule: if multiple chunks share the same `source` filename, only the one with the highest score is kept. Sources are then sorted by score descending.
 
 ---
 
 ## Final Response Schema
 
-After all 4 stages complete, the pipeline returns:
+After all 4 stages complete, `run_pipeline()` assembles a `QueryResponse`:
 
 ```python
 class QueryResponse(BaseModel):
     question: str
     answer: str
-    sources: List[SourceLink]
     intent: str
     has_answer: bool
+    sources: List[SourceLink]
     processing_time_ms: int
+    reformulated_query: str = ""      # Stage 1 output — surfaced in UI pipeline trace
+    key_entities: List[str] = []      # Stage 1 output — surfaced in UI pipeline trace
+    chunks_retrieved: int = 0         # Stage 2 output — total chunks before deduplication
 ```
+
+The three additional fields (`reformulated_query`, `key_entities`, `chunks_retrieved`) are displayed in the **"How I found this"** expander in the Streamlit UI, making the 4-stage pipeline reasoning visible to the user.
 
 ---
 

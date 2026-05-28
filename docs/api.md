@@ -72,20 +72,23 @@ Content-Type: application/json
   "sources": [
     {
       "title": "IT Software Request Policy",
-      "url": "https://confluence.internal/pages/it-software-request",
+      "url": "http://localhost:8000/documents/view/it-software-request.md",
       "source_file": "it-software-request.md",
       "page": 2,
       "score": 0.89
     },
     {
       "title": "Employee Onboarding Guide",
-      "url": "https://confluence.internal/pages/onboarding-guide",
+      "url": "http://localhost:8000/documents/view/onboarding-guide.md",
       "source_file": "onboarding-guide.md",
       "page": 5,
       "score": 0.71
     }
   ],
-  "processing_time_ms": 1243
+  "processing_time_ms": 1243,
+  "reformulated_query": "software installation request approval process IT department",
+  "key_entities": ["software", "IT request", "approval", "portal"],
+  "chunks_retrieved": 5
 }
 ```
 
@@ -99,6 +102,9 @@ Content-Type: application/json
 | `has_answer` | `boolean` | `false` if no relevant documents were found or LLM could not form an answer |
 | `sources` | `array[SourceLink]` | Ordered list of source documents used, most relevant first |
 | `processing_time_ms` | `integer` | End-to-end pipeline latency in milliseconds |
+| `reformulated_query` | `string` | The query after Stage 1 reformulation — keyword-rich rewrite used for vector search |
+| `key_entities` | `array[string]` | Key topics and nouns extracted by Stage 1 (up to 5 items) |
+| `chunks_retrieved` | `integer` | Total number of document chunks returned by Stage 2 before deduplication |
 
 **SourceLink object**
 

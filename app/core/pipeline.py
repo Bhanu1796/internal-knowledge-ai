@@ -31,4 +31,7 @@ def run_pipeline(question: str, top_k: int | None = None) -> QueryResponse:
         has_answer=result["has_answer"],
         sources=result["sources"],
         processing_time_ms=elapsed_ms,
+        reformulated_query=result.get("reformulated_query", ""),
+        key_entities=result.get("key_entities", []),
+        chunks_retrieved=result.get("chunks_retrieved", 0),
     )

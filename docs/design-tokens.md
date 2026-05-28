@@ -2,61 +2,140 @@
 
 ## Overview
 
-Design tokens define the visual constants — colours, typography, spacing, shadows, and border radii — used across the Streamlit frontend. All CSS in `frontend/app.py` must reference these values directly. Changing a token here propagates the change consistently across the entire UI.
+Design tokens define the visual constants — colours, typography, spacing, shadows, and border radii — used across the Streamlit frontend. All CSS in `frontend/app.py` must reference these values directly.
+
+> **Theme:** Dark — AI-native dark theme with purple/violet primary accent and aurora background glow.
 
 ---
 
 ## Colour Palette
 
-### Brand Colours
+### Background
 
 | Token | Hex | Usage |
 |---|---|---|
-| `--color-primary` | `#1E6FFF` | Primary buttons, active states, links |
-| `--color-primary-hover` | `#1558CC` | Primary button hover state |
-| `--color-primary-light` | `#E8F0FF` | Subtle background tints, selected states |
+| `--color-bg-base` | `#070712` | App background (near-black, slight purple tint) |
+| `--color-bg-sidebar` | `#0D0D1C` | Sidebar background |
+| `--color-bg-surface` | `rgba(255,255,255,0.025)` | Cards, expanders |
+| `--color-bg-surface-hover` | `rgba(255,255,255,0.04)` | Card hover state |
+| `--color-bg-input` | `rgba(255,255,255,0.035)` | Chat input, form fields |
 
-### Neutral Colours
-
-| Token | Hex | Usage |
-|---|---|---|
-| `--color-bg-base` | `#FFFFFF` | Main page background |
-| `--color-bg-surface` | `#F7F9FC` | Cards, panels, sidebar background |
-| `--color-bg-elevated` | `#FFFFFF` | Source cards, modals |
-| `--color-border` | `#E2E8F0` | Card borders, dividers, input borders |
-| `--color-border-hover` | `#CBD5E1` | Border on hover |
-
-### Text Colours
+### Brand / Accent
 
 | Token | Hex | Usage |
 |---|---|---|
-| `--color-text-primary` | `#0F172A` | Main body text, headings |
-| `--color-text-secondary` | `#475569` | Subtitles, captions, meta text |
-| `--color-text-muted` | `#94A3B8` | Placeholders, disabled states |
-| `--color-text-link` | `#1E6FFF` | Anchor links |
-| `--color-text-link-hover` | `#1558CC` | Anchor link hover |
+| `--color-primary` | `#7C3AED` | Primary accent — violet |
+| `--color-primary-dim` | `rgba(124,58,237,0.12)` | Tinted backgrounds |
+| `--color-primary-border` | `rgba(124,58,237,0.28)` | Tinted borders |
+| `--color-secondary` | `#4F46E5` | Secondary gradient stop — indigo |
+| `--color-glow` | `rgba(109,40,217,0.22)` | Aurora radial glow |
 
-### Semantic Colours
-
-| Token | Hex | Usage |
-|---|---|---|
-| `--color-success` | `#16A34A` | API online badge, success states |
-| `--color-success-bg` | `#DCFCE7` | Success badge background |
-| `--color-error` | `#DC2626` | API offline badge, error messages |
-| `--color-error-bg` | `#FEE2E2` | Error badge background |
-| `--color-warning` | `#D97706` | Warning messages |
-| `--color-warning-bg` | `#FEF3C7` | Warning badge background |
-| `--color-info` | `#0284C7` | Info messages, intent chips |
-| `--color-info-bg` | `#E0F2FE` | Info badge background |
-
-### Chat Colours
+### Text
 
 | Token | Hex | Usage |
 |---|---|---|
-| `--color-chat-user-bg` | `#EFF6FF` | User message bubble background |
-| `--color-chat-assistant-bg` | `#F8FAFC` | Assistant message bubble background |
-| `--color-chat-user-border` | `#BFDBFE` | User bubble left border accent |
-| `--color-chat-assistant-border` | `#E2E8F0` | Assistant bubble left border accent |
+| `--color-text-primary` | `#F1F5F9` | Main body text, headings |
+| `--color-text-secondary` | `#94A3B8` | Subtitles, sidebar labels |
+| `--color-text-muted` | `#64748B` | Captions, meta, disabled |
+| `--color-text-faint` | `#475569` | Timestamps, doc labels |
+| `--color-text-accent` | `#A78BFA` | Intent chips, entity pills |
+
+### Borders
+
+| Token | Value | Usage |
+|---|---|---|
+| `--color-border` | `rgba(255,255,255,0.07)` | Card and panel borders |
+| `--color-border-active` | `rgba(124,58,237,0.45)` | Focus / active states |
+| `--color-border-sidebar` | `rgba(255,255,255,0.05)` | Sidebar dividers |
+
+### Semantic
+
+| Token | Hex | Usage |
+|---|---|---|
+| `--color-success` | `#34D399` | API online dot |
+| `--color-success-glow` | `rgba(52,211,153,0.7)` | API dot box-shadow |
+| `--color-error` | `#F87171` | API offline dot, errors |
+
+### Intent Chip Colours
+
+| Intent | Background | Text | Border |
+|--------|-----------|------|--------|
+| POLICY_LOOKUP | `rgba(139,92,246,0.14)` | `#A78BFA` | `rgba(139,92,246,0.28)` |
+| PROCESS_INQUIRY | `rgba(6,182,212,0.11)` | `#67E8F9` | `rgba(6,182,212,0.24)` |
+| CONTACT_LOOKUP | `rgba(52,211,153,0.11)` | `#6EE7B7` | `rgba(52,211,153,0.24)` |
+| GENERAL_INFO | `rgba(251,191,36,0.11)` | `#FCD34D` | `rgba(251,191,36,0.24)` |
+| UNKNOWN | `rgba(100,116,139,0.11)` | `#94A3B8` | `rgba(100,116,139,0.22)` |
+
+---
+
+## Typography
+
+### Font Family
+
+| Token | Value |
+|---|---|
+| `--font-sans` | `'Inter', system-ui, -apple-system, sans-serif` |
+
+### Font Sizes
+
+| Token | Value | Usage |
+|---|---|---|
+| `--text-2xs` | `10px` | Section labels, uppercase headers |
+| `--text-xs` | `11px` | Source meta, timestamps, badges |
+| `--text-sm` | `12.5px` | Doc items, button labels |
+| `--text-base` | `13px` | Source card titles, chat body |
+| `--text-md` | `0.92rem` | Chat input |
+| `--text-lg` | `1.05rem` | Page header title |
+| `--text-xl` | `1.55rem` | Welcome title |
+
+### Font Weights
+
+| Token | Value | Usage |
+|---|---|---|
+| `--font-normal` | `400` | Body text, example pill labels |
+| `--font-medium` | `500` | Status pill, button labels |
+| `--font-semibold` | `600` | Source card titles |
+| `--font-bold` | `700` | Page title, stat numbers, sidebar logo |
+| `--font-extrabold` | `800` | Welcome title |
+
+---
+
+## Spacing Scale
+
+| Token | Value | Usage |
+|---|---|---|
+| `--space-1` | `4px` | Icon gap, tight padding |
+| `--space-2` | `7–8px` | Doc item padding, chip padding |
+| `--space-3` | `10–12px` | Stat card, source card padding |
+| `--space-4` | `14–16px` | Card padding, standard gaps |
+| `--space-5` | `18–20px` | Section spacing |
+| `--space-6` | `22px` | Welcome icon margin |
+| `--space-8` | `34px` | Welcome sub margin-bottom |
+
+---
+
+## Border Radius
+
+| Token | Value | Usage |
+|---|---|---|
+| `--radius-sm` | `5–6px` | Score badges, entity pills |
+| `--radius-md` | `7–8px` | Buttons, doc items, sidebar expanders |
+| `--radius-lg` | `10px` | Source cards |
+| `--radius-xl` | `14px` | Chat input, page header icon |
+| `--radius-2xl` | `22px` | Welcome glow icon |
+| `--radius-full` | `20px` | Status pills, sidebar logo |
+
+---
+
+## Shadows & Glows
+
+| Token | Value | Usage |
+|---|---|---|
+| `--shadow-header-icon` | `0 4px 16px rgba(124,58,237,0.4)` | Page header icon |
+| `--shadow-send-btn` | `0 2px 12px rgba(124,58,237,0.45)` | Chat send button |
+| `--shadow-welcome-glow` | `0 0 50px rgba(124,58,237,0.14)` | Welcome icon ambient |
+| `--shadow-focus-ring` | `0 0 0 3px rgba(124,58,237,0.07)` | Input focus ring |
+| `--glow-status-online` | `0 0 7px rgba(52,211,153,0.7)` | API online dot |
 
 ---
 
